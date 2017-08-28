@@ -1,6 +1,6 @@
 {
   "name": "cancas-effects",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "cancas effects",
   "main": "index.js",
   "scripts": {
@@ -17,7 +17,9 @@
   ],
   "author": "cycjimmy <cycjimmy@gmail.com> (https://github.com/cycjimmy)",
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "three": "^0.87.1"
+  },
   "devDependencies": {
     "autoprefixer": "^7.1.1",
     "babel-core": "^6.25.0",
