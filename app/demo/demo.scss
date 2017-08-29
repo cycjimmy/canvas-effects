@@ -1,11 +1,6 @@
 @import '../theme/_variables';
 @import '../theme/_utilities';
 
-.wrapper {
-  display: flex;
-  @include flex-box-align(center, center);
-}
-
 .title {
   font-size: $fontL;
   font-weight: 700;
