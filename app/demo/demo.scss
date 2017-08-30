@@ -1,7 +1,35 @@
 @import '../theme/_variables';
 @import '../theme/_utilities';
 
-.title {
-  font-size: $fontL;
+.boxSection {
+  width: 1024px;
+  height: 1024px;
+}
+
+.boxContent {
+  @include fix-center(0);
+  display: flex;
+  @include flex-box-align(center, center);
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+}
+
+.boxContentNum {
+  padding: 20px;
+
+  background-color: rgba($fontColor, .3);
+  font-size: 100px;
   font-weight: 700;
+  color: $fontColor;
+  border: 2px solid $fontColor;
+  border-radius: 16px;
+  cursor: pointer;
+}
+
+.boxBg {
+  @include fix-center(-100%);
+  z-index: 1;
+  width: 1026px; // 2 pixels extra to close the gap.
+  height: 1026px;
 }

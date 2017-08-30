@@ -17,7 +17,7 @@ html {
 }
 
 body {
-  background-color: $bgc;
+  //background-color: $bgc;
   color: $fontColor;
   font-size: $fontM;
   font-family: -apple-system-font, "Helvetica Neue", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
@@ -35,8 +35,4 @@ body {
     @extend %gpu-speedUp;
   }
 }
-
-
-
-
 

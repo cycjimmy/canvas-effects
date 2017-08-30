@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import QueryAll from '../share/QueryAll';
 import {
   CSS3DObject,
   CSS3DRenderer,
@@ -7,6 +8,8 @@ import {
 import {
   DeviceOrientationControls
 } from '../share/three/DeviceOrientationControls';
+
+import _style from './demo.scss';
 
 // images
 import negx from '../../static/images/negx.jpg';
@@ -25,14 +28,16 @@ export default class DemoComponent {
       this.paramInit();
       this.init();
       setTimeout(() => resolve(), 0);
-    });
+    })
+      .then(() => {
+        this.eventBind();
+      });
   };
 
   paramInit() {
     this.context = document.querySelector('.main-screen');      // 上下文
     this.contextClientRect = this.context.getBoundingClientRect();
   };
-
 
   init() {
     let
@@ -94,14 +99,25 @@ export default class DemoComponent {
     for (let i = 0; i < sides.length; i++) {
       let
         side = sides[i]
-        , img = document.createElement('img')
+        , boxSection = document.createElement('section')
+        , boxContent = document.createElement('div')
+        , imgBg = document.createElement('img')
       ;
 
-      img.width = 1026; // 2 pixels extra to close the gap.
-      img.src = side.url;
+      boxSection.classList.add(_style.boxSection);
+      boxContent.classList.add(_style.boxContent);
+      boxContent.innerHTML = `
+      <div class=${_style.boxContentNum} data-num=${i}>${i}</div>
+      `;
+
+      imgBg.width = 1026; // 2 pixels extra to close the gap.
+      imgBg.src = side.url;
+      imgBg.classList.add(_style.boxBg);
+      boxSection.appendChild(imgBg);
+      boxSection.appendChild(boxContent);
 
       let
-        object = new CSS3DObject(img)
+        object = new CSS3DObject(boxSection)
       ;
 
       object.position.fromArray(side.position);
@@ -114,5 +130,16 @@ export default class DemoComponent {
     window.addEventListener('resize', onWindowResize, false);
 
     animate();
+  };
+
+  eventBind() {
+    new QueryAll('.' + _style.boxContentNum, this.context).on('click', function () {
+      let
+        num = this.dataset.num || ''
+      ;
+
+      console.log(num);
+      alert(num);
+    });
   };
 };
