@@ -11,3 +11,7 @@
 [david-dev-image]: https://david-dm.org/cycdpoCodeLab/canvas-effects/dev-status.svg?style=flat-square
 [david-dev-url]: https://david-dm.org/cycdpoCodeLab/canvas-effects?type=dev
 
+```shell
+# create new branch based on master
+$ git checkout -b [newBranch] master
+```
