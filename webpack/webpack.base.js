@@ -7,7 +7,6 @@ const
   , webpack = require('webpack')
 
   // Webpack Plugin
-  , CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin')
   , DefinePlugin = require('webpack/lib/DefinePlugin')
 ;
 
@@ -19,7 +18,7 @@ const
 
 module.exports = {
   entry: {
-    "main": path.resolve('app', 'main.js'),
+    'main': path.resolve('app', 'main.js'),
   },
 
   output: {
@@ -44,11 +43,25 @@ module.exports = {
 
   module: {
     rules: [
+      // Web worker
+      {
+        test: /\.worker\.js$/,
+        loader: 'worker-loader',
+        options: {
+          inline: true,
+        },
+      },
+
       // Scripts
       {
         test: /\.js$/,
-        include: path.resolve('app'),
-        exclude: /node_modules/,
+        type: 'javascript/auto',
+        include: [
+          path.resolve('app')
+        ],
+        exclude: [
+          path.resolve('node_modules'),
+        ],
         loader: 'babel-loader',
       },
 
@@ -59,7 +72,9 @@ module.exports = {
           path.resolve('app'),
           path.resolve('static'),
         ],
-        exclude: /node_modules/,
+        exclude: [
+          path.resolve('node_modules'),
+        ],
         loader: 'pug-loader',
       },
 
@@ -84,12 +99,27 @@ module.exports = {
     ]
   },
 
-  plugins: [
-    new CommonsChunkPlugin({
-      names: ['main'],
-      minChunks: Infinity,
-    }),
+  optimization: {
+    splitChunks: {
+      chunks: 'initial',
+      name: true,
+      cacheGroups: {
+        default: false,
+        vendors: false,
+        main: {
+          name: 'main',
+          chunks: 'initial',
+          minSize: Infinity,
+          minChunks: Infinity,
+        },
+      }
+    },
+    runtimeChunk: {
+      name: 'main'
+    }
+  },
 
+  plugins: [
     new DefinePlugin({
       DEVELOPMENT: JSON.stringify(DEVELOPMENT),
       PRODUCTION: JSON.stringify(PRODUCTION),

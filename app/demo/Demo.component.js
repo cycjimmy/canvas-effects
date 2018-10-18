@@ -1,15 +1,14 @@
 import * as THREE from 'three';
-import QueryAll from '../share/QueryAll';
 import {
   CSS3DObject,
   CSS3DRenderer,
 } from '../share/three/CSS3DRenderer';
-
 import {
   DeviceOrientationControls
 } from '../share/three/DeviceOrientationControls';
 
 import _style from './demo.scss';
+import nodeListToArray from 'awesome-js-funcs/typeConversion/nodeListToArray';
 
 // images
 import negx from '../../static/images/negx.jpg';
@@ -21,6 +20,7 @@ import posz from '../../static/images/posz.jpg';
 
 export default class DemoComponent {
   constructor() {
+    this.context = document.querySelector('.main-screen');
   };
 
   load() {
@@ -35,7 +35,6 @@ export default class DemoComponent {
   };
 
   paramInit() {
-    this.context = document.querySelector('.main-screen');      // 上下文
     this.contextClientRect = this.context.getBoundingClientRect();
   };
 
@@ -133,13 +132,12 @@ export default class DemoComponent {
   };
 
   eventBind() {
-    new QueryAll('.' + _style.boxContentNum, this.context).on('click', function () {
-      let
-        num = this.dataset.num || ''
-      ;
+    const aBoxContentNum = nodeListToArray(this.context.querySelectorAll('.' + _style.boxContentNum));
 
+    aBoxContentNum.forEach(el => el.addEventListener('click', () => {
+      const num = el.dataset.num || '';
       console.log(num);
       alert(num);
-    });
+    }));
   };
 };
