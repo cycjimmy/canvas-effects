@@ -1,7 +1,7 @@
 {
-  "name": "cancas-effects",
+  "name": "canvas-effects",
   "version": "0.0.3",
-  "description": "cancas effects",
+  "description": "canvas effects",
   "main": "index.js",
   "scripts": {
     "start": "cross-env NODE_ENV=development webpack --config webpack/webpack.dev.config.js --display-modules --display-reasons --display-error-details --watch --color",
@@ -10,11 +10,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cycdpoCodeLab/cancas-effects.git"
+    "url": "git+https://github.com/cycdpoCodeLab/canvas-effects.git"
   },
   "keywords": [
     "h5",
-    "cancas"
+    "canvas"
   ],
   "author": "cycjimmy <cycjimmy@gmail.com> (https://github.com/cycjimmy)",
   "license": "MIT",
