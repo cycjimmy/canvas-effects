@@ -4,7 +4,6 @@
 [![David deps][david-image]][david-url]
 [![devDependencies Status][david-dev-image]][david-dev-url]
 
-
 [travis-image]: https://travis-ci.org/cycdpoCodeLab/cancas-effects.svg?branch=master
 [travis-url]: https://travis-ci.org/cycdpoCodeLab/cancas-effects
 [david-image]: https://img.shields.io/david/cycdpoCodeLab/cancas-effects.svg?style=flat-square
