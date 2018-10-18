@@ -1,14 +1,13 @@
 import Templates from '../share/Templates';
-import * as demo from './demo.pug';
-import * as _style from './demo.scss';
+import demo from './demo.pug';
+import _style from './demo.scss';
 
 export default class DemoComponent {
   constructor() {
-    this.context = document.querySelector('.main-screen');      // 上下文
+    this.context = document.querySelector('.main-screen');
   };
 
   load() {
-
     return new Promise(resolve => {
       this.context.classList.add(_style.wrapper);
 
@@ -16,7 +15,7 @@ export default class DemoComponent {
         _style,
       }).load();
 
-      setTimeout(() => resolve(), 0);
+      setTimeout(resolve, 0);
     });
   };
 };

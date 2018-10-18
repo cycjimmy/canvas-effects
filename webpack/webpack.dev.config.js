@@ -8,15 +8,15 @@
   // Webpack Plugin
   , BrowserSyncPlugin = require('browser-sync-webpack-plugin')
   , HtmlWebpackPlugin = require('html-webpack-plugin')
-  , DefinePlugin = require('webpack/lib/DefinePlugin')
   , CleanWebpackPlugin = require('clean-webpack-plugin')
 ;
 
 module.exports = webpackMerge(webpackBase, {
+  mode: 'development',
   devtool: 'eval-source-map',
 
   output: {
-    path: path.resolve('./dist'),
+    path: path.resolve('dist'),
   },
 
   module: {
@@ -24,7 +24,9 @@ module.exports = webpackMerge(webpackBase, {
       // Style
       {
         test: /\.scss$/,
-        exclude: /node_modules/,
+        exclude: [
+          path.resolve('node_modules'),
+        ],
         use: [
           {
             loader: 'style-loader'
@@ -76,7 +78,9 @@ module.exports = webpackMerge(webpackBase, {
       // Font
       {
         test: /\.(eot|ttf|woff|woff2)$/,
-        exclude: /node_modules/,
+        exclude: [
+          path.resolve('node_modules'),
+        ],
         use: [
           {
             loader: 'file-loader',
@@ -90,12 +94,6 @@ module.exports = webpackMerge(webpackBase, {
   },
 
   plugins: [
-    new DefinePlugin({
-      'process.env': {
-        NODE_ENV: "'development'"
-      }
-    }),
-
     new CleanWebpackPlugin(['dist'], {
       root: path.resolve('./'),
       verbose: true,

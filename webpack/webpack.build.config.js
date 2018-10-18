@@ -9,12 +9,10 @@ const
   // Webpack Plugin
   , BrowserSyncPlugin = require('browser-sync-webpack-plugin')
   , HtmlWebpackPlugin = require('html-webpack-plugin')
-  , DefinePlugin = require('webpack/lib/DefinePlugin')
   , UglifyJsPlugin = require('uglifyjs-webpack-plugin')
   , CleanWebpackPlugin = require('clean-webpack-plugin')
-  , LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin')
   , ExtractTextPlugin = require('extract-text-webpack-plugin')
-  , WebpackChunkHash = require("webpack-chunk-hash")
+  , OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 ;
 
 
@@ -22,41 +20,40 @@ let
   imageWebpackLoaderConfig = {
     loader: 'image-webpack-loader',
     options: {
-      query: {
-        mozjpeg: {
-          progressive: true,
-          quality: 65,
-        },
-        gifsicle: {
-          interlaced: false,
-        },
-        optipng: {
-          optimizationLevel: 6,
-        },
-        pngquant: {
-          quality: '65-90',
-          speed: 4,
-        },
-        svgo: {
-          plugins: [
-            {
-              removeViewBox: false
-            },
-            {
-              removeEmptyAttrs: false
-            }
-          ]
-        },
+      mozjpeg: {
+        progressive: true,
+        quality: 70,
+      },
+      gifsicle: {
+        interlaced: false,
+      },
+      optipng: {
+        optimizationLevel: 6,
+      },
+      pngquant: {
+        quality: '65-90',
+        speed: 4,
+      },
+      svgo: {
+        plugins: [
+          {
+            removeViewBox: false
+          },
+          {
+            removeEmptyAttrs: false
+          }
+        ]
       },
     }
   }
 ;
 
 module.exports = webpackMerge(webpackBase, {
+  mode: 'production',
   bail: true,
 
   output: {
-    path: path.resolve('./build'),
+    path: path.resolve('build'),
   },
 
   module: {
@@ -72,6 +69,7 @@ module.exports = webpackMerge(webpackBase, {
         ],
         use: ExtractTextPlugin.extract({
           fallback: 'style-loader',
+          publicPath: '../',  // fix images url bug
           use: [
             styleLoadersConfig.cssLoader,
             styleLoadersConfig.postLoader,
@@ -146,8 +144,12 @@ module.exports = webpackMerge(webpackBase, {
       // Svg icons
       {
         test: /\.svg$/,
-        exclude: /node_modules/,
-        include: path.resolve('static', 'images', 'icons'),
+        exclude: [
+          path.resolve('node_modules'),
+        ],
+        include: [
+          path.resolve('static', 'images', 'icons')
+        ],
         use: [
           {
             loader: 'file-loader',
@@ -161,7 +163,9 @@ module.exports = webpackMerge(webpackBase, {
       // Font
       {
         test: /\.(eot|ttf|woff|woff2)$/,
-        exclude: /node_modules/,
+        exclude: [
+          path.resolve('node_modules'),
+        ],
         use: [
           {
             loader: 'url-loader',
@@ -195,7 +199,6 @@ module.exports = webpackMerge(webpackBase, {
     }),
 
     new webpack.HashedModuleIdsPlugin(),
-    new WebpackChunkHash(),
 
     new CleanWebpackPlugin(['build'], {
       root: path.resolve('./'),
@@ -203,39 +206,20 @@ module.exports = webpackMerge(webpackBase, {
       dry: false,
     }),
 
-    new DefinePlugin({
-      'process.env': {
-        NODE_ENV: '"production"'
-      }
-    }),
-
-    // Uglify Js
-    new UglifyJsPlugin({
-      beautify: false,
-      comments: false,
-      compress: {
-        screw_ie8: true,
-        warnings: false,
-        drop_debugger: true,
-        // drop_console: true,
-        collapse_vars: true,
-        reduce_vars: true,
-      },
-      mangle: {
-        screw_ie8: true
-      },
-      output: {
-        comments: false,
-        screw_ie8: true
-      },
-      sourceMap: true,
-    }),
-
     new ExtractTextPlugin({
-      filename: '[name].[chunkhash:8].min.css',
-      disable: false,
-      allChunks: true,
+      filename: 'style/[name].[chunkhash:8].min.css',
+      ignoreOrder: false,
+      allChunks: false,
     }),
+
+    new OptimizeCssAssetsPlugin({
+      assetNameRegExp: /\.min\.css$/g,
+      cssProcessor: require('cssnano'),
+      cssProcessorOptions: { discardComments: { removeAll: true } },
+      canPrint: true
+    }),
+
+    new webpack.optimize.ModuleConcatenationPlugin(),
 
     new BrowserSyncPlugin(browserSyncConfig({
       server: {
@@ -251,4 +235,30 @@ module.exports = webpackMerge(webpackBase, {
       reload: false,
     }),
   ],
+
+  optimization: {
+    minimizer: [
+      // Uglify Js
+      new UglifyJsPlugin({
+        uglifyOptions: {
+          ie8: false,
+          safari10: true,
+          ecma: 5,
+          output: {
+            comments: false,
+            beautify: false
+          },
+          compress: {
+            warnings: false,
+            drop_debugger: true,
+            drop_console: true,
+            collapse_vars: true,
+            reduce_vars: true
+          },
+          warnings: false,
+          sourceMap: true
+        }
+      }),
+    ]
+  }
 });
