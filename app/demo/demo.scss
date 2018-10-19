@@ -2,11 +2,15 @@
 @import '../theme/_utilities';
 
 .wrapper {
-  display: flex;
-  @include flex-box-align(center, center);
+  @extend %flexCenter;
 }
 
-.title {
-  font-size: $fontL;
-  font-weight: 700;
+.canvasWrapper {
+  @extend %rel;
+  width: 700px;
+  height: 450px;
+}
+
+.canvas {
+  @extend %fullContainer;
 }
