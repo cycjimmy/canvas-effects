@@ -14,6 +14,7 @@ export default class PhotosBox {
     };
     this.photos = [];
     this.canvas = null;
+    this.tempCanvas = document.createElement('canvas');
 
     this.state = {
       clipRadius: 0,
@@ -64,7 +65,6 @@ export default class PhotosBox {
     this.canvas.height = this._config.height;
     this.ctx = this.canvas.getContext('2d');
 
-    this.tempCanvas = document.createElement('canvas');
     this.tempCanvas.width = this._config.width;
     this.tempCanvas.height = this._config.height;
     this.tempCtx = this.tempCanvas.getContext('2d');
