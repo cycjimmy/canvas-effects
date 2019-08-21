@@ -1,17 +1,9 @@
-/**
- * Created by cyc on 2017/2/9.
- */
-
 const
   path = require('path')
   , PRODUCTION = process.env.NODE_ENV === 'production'       // 生产模式
 ;
 
-
-let
-  cssIdentifier = PRODUCTION ? '[hash:base64:10]' : '[path][name]__[local]'
-;
-
+const cssIdentifier = PRODUCTION ? '[hash:base64:10]' : '[name]__[local]';
 
 module.exports = options => {
   return Object.assign({
@@ -19,8 +11,9 @@ module.exports = options => {
       loader: 'css-loader',
       options: {
         importLoaders: 2,
-        modules: true,
-        localIdentName: cssIdentifier,
+        modules: {
+          localIdentName: cssIdentifier,
+        },
       },
     },
     postLoader: {

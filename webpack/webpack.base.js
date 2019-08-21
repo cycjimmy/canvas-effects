@@ -1,13 +1,10 @@
-/**
- * Created by cyc on 2017/2/4.
- */
-
 const
   path = require('path')
   , webpack = require('webpack')
 
   // Webpack Plugin
   , DefinePlugin = require('webpack/lib/DefinePlugin')
+  , {CleanWebpackPlugin} = require('clean-webpack-plugin')
 ;
 
 const
@@ -56,12 +53,6 @@ module.exports = {
       {
         test: /\.js$/,
         type: 'javascript/auto',
-        include: [
-          path.resolve('app')
-        ],
-        exclude: [
-          path.resolve('node_modules'),
-        ],
         loader: 'babel-loader',
       },
 
@@ -125,6 +116,11 @@ module.exports = {
       PRODUCTION: JSON.stringify(PRODUCTION),
       PRODUCTION_TEST_SERVER: JSON.stringify(PRODUCTION_TEST_SERVER),
       TEST_SERVER_ADDRESS: '',
+    }),
+
+    new CleanWebpackPlugin({
+      verbose: true,
+      dry: false
     }),
   ],
 };
