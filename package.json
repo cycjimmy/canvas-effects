@@ -1,6 +1,6 @@
 {
   "name": "canvas-effects",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "canvas effects",
   "main": "index.js",
   "scripts": {
@@ -19,6 +19,7 @@
   "author": "cycjimmy <cycjimmy@gmail.com> (https://github.com/cycjimmy)",
   "license": "MIT",
   "dependencies": {
+    "@cycjimmy/sass-lib": "^0.0.3",
     "awesome-js-funcs": "^0.1.6",
     "three": "^0.107.0"
   },

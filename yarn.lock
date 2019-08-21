@@ -720,6 +720,11 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
+"@cycjimmy/sass-lib@^0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@cycjimmy/sass-lib/-/sass-lib-0.0.3.tgz#9f21666ffdffb18103ca0e2f9951312642eb3d19"
+  integrity sha512-tK2LszB4ihXkS117CF7ExZztgmHlOUQb6+Ym+BHl2McrrOiezIzC9Pk50maC42Z6ZLdJV7oLAjQw/+4zg+NmIg==
+
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/@mrmlnc/readdir-enhanced/-/readdir-enhanced-2.2.1.tgz#524af240d1a360527b730475ecfa1344aa540dde"
