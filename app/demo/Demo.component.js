@@ -8,6 +8,15 @@ import areaPolygon from './areaPolygon';
 export default class DemoComponent {
   constructor() {
     this.context = document.querySelector('.main-screen');
+
+    this.config = {
+      circleRadius: 100,
+      circleCenterX: 0,
+      circleCenterY: 0,
+      wholeArea: 0,
+    };
+
+    this.config.wholeArea = Math.PI * Math.pow(this.config.circleRadius, 2);
   };
 
   load() {
@@ -37,7 +46,21 @@ export default class DemoComponent {
       isDrawingMode: true,
     });
 
-    console.log(this.canvas);
+    this.circle = new fabric.Circle({
+      radius: this.config.circleRadius,
+      left: this.canvas.width >> 1,
+      top: this.canvas.height >> 1,
+      fill: 'transparent',
+      stroke: '#ff0000',
+      originX: 'center',
+      originY: 'center',
+    });
+    this.canvas.add(this.circle);
+
+    this.config.circleCenterX = this.circle.left;
+    this.config.circleCenterY = this.circle.top;
+
+    console.log(this.config);
   };
 
   eventBind() {
@@ -50,38 +73,88 @@ export default class DemoComponent {
 
     this.canvas.on({
       'path:created': () => {
+
         console.log('path:created');
         this.canvas.isDrawingMode = false;
 
-        const customPath = this.canvas.getObjects()[0];
-        customPath.set({
-          fill: '#ff0000',
-          stroke: '#ff0000',
-        });
+        const customPath = this.canvas.getObjects()[1];
 
-        this.canvas.renderAll();
-
-        console.log(customPath);
-        console.log(customPath.calcCoords());
-
-        const pathPoints = customPath.path.map(point => [
-          point[1],
-          point[2],
-        ]);
-        console.log(pathPoints);
-
-        const firstPoint = pathPoints[0];
-        const lastPoint = pathPoints[pathPoints.length - 1];
-        console.log(firstPoint, lastPoint, firstPoint[0] !== lastPoint[0] || firstPoint[1] !== lastPoint[1]);
-        if (firstPoint[0] !== lastPoint[0] || firstPoint[1] !== lastPoint[1]) {
-          pathPoints.push(firstPoint);
+        if (customPath.type !== 'path') {
+          return;
         }
 
-        console.log(pathPoints);
-
-        const area = areaPolygon(pathPoints);
-        console.log('Area: ', area);
-      }
+        // this.drawInCircle(customPath);
+        this.drawFree(customPath);
+      },
     });
+  };
+
+  drawInCircle(customPath) {
+    customPath.set({
+      stroke: 'transparent',
+    });
+
+    this.canvas.renderAll();
+
+    const pathPoints = customPath.path.map(point => this.clipToCirclePoint({
+      x: point[1],
+      y: point[2],
+    }));
+
+    console.log(pathPoints);
+
+    const polygon = new fabric.Polygon(pathPoints);
+    this.canvas.add(polygon);
+
+    const area = areaPolygon(pathPoints);
+    console.log('Area: ', area);
+    console.log('Score: ', this.calcScore(area));
+  };
+
+  drawFree(customPath) {
+    customPath.set({
+      fill: '#ff0000',
+      stroke: '#ff0000',
+    });
+
+    this.canvas.renderAll();
+
+    const pathPoints = customPath.path.map(point => ({
+      x: point[1],
+      y: point[2],
+    }));
+
+    console.log(pathPoints);
+
+    const area = areaPolygon(pathPoints);
+    console.log('Area: ', area);
+    console.log('Score: ', this.calcScore(area));
+  };
+
+  clipToCirclePoint({x, y}) {
+    if (
+      Math.pow(x - this.config.circleCenterX, 2) +
+      Math.pow(y - this.config.circleCenterY, 2) <=
+      Math.pow(this.config.circleRadius, 2)
+    ) {
+      return {x, y};
+    }
+
+    const
+      dx = x - this.config.circleCenterX
+      , dy = y - this.config.circleCenterY
+      , rad = Math.atan2(dy, dx)
+      , newX = this.config.circleCenterX + Math.cos(rad) * this.config.circleRadius
+      , newY = this.config.circleCenterY + Math.sin(rad) * this.config.circleRadius
+    ;
+
+    console.log({x, y}, {newX, newY});
+
+    return {x: newX, y: newY};
+  };
+
+  calcScore(area) {
+    const percentage = 1 - Math.abs(area - this.config.wholeArea) / this.config.wholeArea;
+    return Math.round(percentage * 100);
   };
 };
