@@ -10,9 +10,21 @@
   width: calcVW(750);
   height: calcVW(1500);
   @extend %flexCenter;
+
+  :global(.canvas-container) {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
 }
 
 .canvas {
-  @extend %fullContainer;
+  @extend %abs;
+  left: 0 !important;
+  top: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
   display: block;
 }

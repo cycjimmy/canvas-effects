@@ -10,7 +10,9 @@ export default class DemoComponent {
     this.context = document.querySelector('.main-screen');
 
     this.config = {
-      circleRadius: 100,
+      canvasWidth: 750,
+      canvasHeight: 1500,
+      circleRadius: 200,
       circleCenterX: 0,
       circleCenterY: 0,
       wholeArea: 0,
@@ -34,26 +36,37 @@ export default class DemoComponent {
   };
 
   paramInit() {
-    this.canvas = new fabric.Canvas(this.context.querySelector('.' + _style.canvas), {
-      enableRetinaScaling: false,
-      width: window.innerWidth,
-      height: window.innerHeight,
-      cssOnly: true,
-      backstoreOnly: true,
-      selectable: false,
-      selection: false,      // 画板显示选中
-      skipTargetFind: true,  // 整个画板元素不能被选中,
-      isDrawingMode: true,
-    });
+    this.canvas = new fabric.Canvas(
+      this.context.querySelector('.' + _style.canvas),
+      {
+        enableRetinaScaling: false,
+        width: this.config.canvasWidth,
+        height: this.config.canvasHeight,
+        cssOnly: true,
+        backstoreOnly: true,
+        selectable: false,
+        selection: false,      // 画板显示选中
+        skipTargetFind: true,  // 整个画板元素不能被选中,
+        isDrawingMode: true,
+      }
+    );
+
+    // set freeDrawingBrush
+    this.canvas.freeDrawingBrush = new fabric.PencilBrush(this.canvas);
+    this.canvas.freeDrawingBrush.width = 10;
+    this.canvas.freeDrawingBrush.color = '#ff9999';
+
+    console.log(this.canvas.freeDrawingBrush);
 
     this.circle = new fabric.Circle({
       radius: this.config.circleRadius,
       left: this.canvas.width >> 1,
       top: this.canvas.height >> 1,
       fill: 'transparent',
-      stroke: '#ff0000',
+      stroke: '#ff9999',
       originX: 'center',
       originY: 'center',
+      strokeWidth: 4,
     });
     this.canvas.add(this.circle);
 
@@ -64,12 +77,12 @@ export default class DemoComponent {
   };
 
   eventBind() {
-    window.addEventListener('resize', () => {
-      setTimeout(() => {
-        this.canvas.setWidth(window.innerWidth);
-        this.canvas.setHeight(window.innerHeight);
-      }, 500);
-    });
+    // window.addEventListener('resize', () => {
+    //   setTimeout(() => {
+    //     this.canvas.setWidth(window.innerWidth);
+    //     this.canvas.setHeight(window.innerHeight);
+    //   }, 500);
+    // });
 
     this.canvas.on({
       'path:created': () => {
@@ -83,8 +96,8 @@ export default class DemoComponent {
           return;
         }
 
-        // this.drawInCircle(customPath);
-        this.drawFree(customPath);
+        this.drawInCircle(customPath);
+        // this.drawFree(customPath);
       },
     });
   };
@@ -103,18 +116,25 @@ export default class DemoComponent {
 
     console.log(pathPoints);
 
-    const polygon = new fabric.Polygon(pathPoints);
+    const polygon = new fabric.Polygon(pathPoints, {
+      fill: '#ff9999',
+    });
     this.canvas.add(polygon);
 
     const area = areaPolygon(pathPoints);
     console.log('Area: ', area);
-    console.log('Score: ', this.calcScore(area));
+    const scoreUsingArea = this.calcScoreUsingArea(area);
+    const scoreUsingPoints = this.calcScoreUsingPoints(pathPoints);
+    console.log('ScoreUsingArea: ', scoreUsingArea);
+    console.log('ScoreUsingPoints: ', scoreUsingPoints);
+    console.log('Score: ', Math.min(scoreUsingArea, scoreUsingPoints));
   };
 
   drawFree(customPath) {
     customPath.set({
-      fill: '#ff0000',
-      stroke: '#ff0000',
+      fill: '#ff9999',
+      stroke: 'transparent',
+      strokeWidth: 0,
     });
 
     this.canvas.renderAll();
@@ -128,7 +148,11 @@ export default class DemoComponent {
 
     const area = areaPolygon(pathPoints);
     console.log('Area: ', area);
-    console.log('Score: ', this.calcScore(area));
+    const scoreUsingArea = this.calcScoreUsingArea(area);
+    const scoreUsingPoints = this.calcScoreUsingPoints(pathPoints);
+    console.log('ScoreUsingArea: ', scoreUsingArea);
+    console.log('ScoreUsingPoints: ', scoreUsingPoints);
+    console.log('Score: ', Math.min(scoreUsingArea, scoreUsingPoints));
   };
 
   clipToCirclePoint({x, y}) {
@@ -153,8 +177,32 @@ export default class DemoComponent {
     return {x: newX, y: newY};
   };
 
-  calcScore(area) {
+  calcScoreUsingArea(area) {
     const percentage = 1 - Math.abs(area - this.config.wholeArea) / this.config.wholeArea;
-    return Math.round(percentage * 100);
+    return (percentage * 100).toFixed(2);
+  };
+
+  calcScoreUsingPoints(points) {
+    const pointLength = points.length;
+
+    if (!pointLength) {
+      return 0;
+    }
+
+    const scoreSum = points.reduce((sum, point) => {
+      const lengthToCenter = Math.sqrt(
+        Math.pow(point.x - this.config.circleCenterX, 2)
+        + Math.pow(point.y - this.config.circleCenterY, 2)
+      );
+
+      const pointScore = (1 - Math.abs(lengthToCenter - this.config.circleRadius) / this.config.circleRadius) * 100;
+      // console.log(point, lengthToCenter, pointScore);
+      return sum + pointScore;
+    }, 0);
+
+    const score = scoreSum / pointLength;
+    console.log(scoreSum, score);
+
+    return score.toFixed(2);
   };
 };
