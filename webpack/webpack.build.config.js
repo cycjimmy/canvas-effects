@@ -10,7 +10,6 @@ const
   , BrowserSyncPlugin = require('browser-sync-webpack-plugin')
   , HtmlWebpackPlugin = require('html-webpack-plugin')
   , UglifyJsPlugin = require('uglifyjs-webpack-plugin')
-  , CleanWebpackPlugin = require('clean-webpack-plugin')
   , ExtractTextPlugin = require('extract-text-webpack-plugin')
   , OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 ;
@@ -199,12 +198,6 @@ module.exports = webpackMerge(webpackBase, {
     }),
 
     new webpack.HashedModuleIdsPlugin(),
-
-    new CleanWebpackPlugin(['build'], {
-      root: path.resolve('./'),
-      verbose: true,
-      dry: false,
-    }),
 
     new ExtractTextPlugin({
       filename: 'style/[name].[chunkhash:8].min.css',
